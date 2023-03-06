@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Layout from "./common/Layout";
 import Timer from "./compoents/Timer";
 import { fireStorage, fireStore } from "../../modules/firebase";
@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 export default function Home() {
   const [name, setName] = useState("");
   const [uploadFile] = useUploadFile();
+  const [imgFile, setImgFile] = useState("");
+
   const storageRef = ref(
     fireStorage,
     `${name}-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
@@ -24,7 +26,7 @@ export default function Home() {
       });
 
       const data = {
-        imageUrl: image?.metadata.fullPath, // image URL을 저장합니다.
+        imageUrl: image?.metadata.fullPath,
         name,
         updatedAt: Timestamp.fromDate(new Date()),
       };
@@ -34,6 +36,18 @@ export default function Home() {
 
       setName("");
       Swal.fire("오늘도 갓생 완료!", "톡방에서 인증도 해보자!", "success");
+    }
+  };
+
+  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : undefined;
+    setSelectedFile(file);
+    const reader = new FileReader();
+    if (reader) {
+      reader.readAsDataURL(file!);
+      reader.onloadend = () => {
+        setImgFile(reader!.result as string);
+      };
     }
   };
 
@@ -60,7 +74,11 @@ export default function Home() {
           <h4 className="w-full font-semibold text-center mt-8 text-xl text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-400">
             기상 인증 이미지
           </h4>
-          <div className="flex items-center justify-center w-full">
+          <div
+            className={`${
+              imgFile ? "hidden" : "flex"
+            } items-center justify-center w-full`}
+          >
             <label
               htmlFor="dropzone-file"
               className="mt-4 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50  hover:bg-gray-100"
@@ -94,21 +112,27 @@ export default function Home() {
                 id="dropzone-file"
                 type="file"
                 className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files ? e.target.files[0] : undefined;
-                  setSelectedFile(file);
-                }}
+                onChange={handleImageFile}
               />
             </label>
           </div>
-          <button
-            onClick={handleWakeUp}
-            className="relative w-full mt-8 mb-8 inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-violet-400 to-sky-400 group-hover:from-violet-500 group-hover:to-sky-400 hover:text-white focus:outline-none focus:ring-sky-300"
-          >
-            <span className="relative w-full px-5 py-2.5 font-medium transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
-              인증하기
-            </span>
-          </button>
+          <img
+            className={`${
+              imgFile ? "flex" : "hidden"
+            } items-center justify-center w-full h-128 mt-4 border-2 rounded-lg`}
+            src={imgFile ? imgFile : ""}
+            alt="기상 인증 이미지"
+          />
+          {imgFile && (
+            <button
+              onClick={handleWakeUp}
+              className="relative w-full mt-8 mb-8 inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-violet-400 to-sky-400 group-hover:from-violet-500 group-hover:to-sky-400 hover:text-white focus:outline-none focus:ring-sky-300"
+            >
+              <span className="relative w-full px-5 py-2.5 font-medium transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0">
+                인증하기
+              </span>
+            </button>
+          )}
         </article>
       </section>
     </Layout>
