@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 export default function Home() {
   const [name, setName] = useState("");
-  const [uploadFile, uploading, snapshot, error] = useUploadFile();
+  const [uploadFile] = useUploadFile();
   const storageRef = ref(
     fireStorage,
     `${name}-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
