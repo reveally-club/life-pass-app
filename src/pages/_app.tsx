@@ -16,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
         />
-        <title>갓생.c패쓰</title>
+        <title>갓생.패쓰</title>
         <meta name="description" content="갓생.패쓰" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://life.reveally.club" />
