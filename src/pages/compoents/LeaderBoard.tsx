@@ -1,4 +1,4 @@
-import { collection } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { fireStore } from "../../../modules/firebase";
 import dayjs from "dayjs";
@@ -6,9 +6,12 @@ import { useState } from "react";
 
 export default function LeaderBoard() {
   const [name, setName] = useState("");
-  const [value] = useCollection(collection(fireStore, "wakeup"), {
-    snapshotListenOptions: { includeMetadataChanges: true },
-  });
+  const [value] = useCollection(
+    query(collection(fireStore, "wakeup"), orderBy("updatedAt", "desc")),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   return (
     <div className="flex flex-col w-full items-center">
