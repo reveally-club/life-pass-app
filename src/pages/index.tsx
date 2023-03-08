@@ -12,6 +12,7 @@ export default function Home() {
   const [name, setName] = useState("");
   const [uploadFile] = useUploadFile();
   const [imgFile, setImgFile] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const storageRef = ref(
     fireStorage,
@@ -20,6 +21,7 @@ export default function Home() {
   const [selectedFile, setSelectedFile] = useState<File>();
 
   const handleWakeUp = async () => {
+    setLoading(true);
     if (selectedFile) {
       const image = await uploadFile(storageRef, selectedFile, {
         contentType: "image/jpeg",
@@ -35,6 +37,7 @@ export default function Home() {
       await setDoc(newWakeUp, data);
 
       setName("");
+      setLoading(false);
       Swal.fire("오늘도 갓생 완료!", "톡방에서 인증도 해보자!", "success");
     }
   };
@@ -65,7 +68,6 @@ export default function Home() {
             value={name}
             onChange={(e) => {
               setName(e.target.value);
-              console.log(e.target.value);
             }}
             className="mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
             type="text"
@@ -123,7 +125,7 @@ export default function Home() {
             src={imgFile ? imgFile : ""}
             alt="기상 인증 이미지"
           />
-          {imgFile && (
+          {imgFile && !loading && (
             <button
               onClick={handleWakeUp}
               className="relative w-full mt-8 mb-8 inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-violet-400 to-sky-400 group-hover:from-violet-500 group-hover:to-sky-400 hover:text-white focus:outline-none focus:ring-sky-300"
