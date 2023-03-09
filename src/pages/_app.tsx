@@ -1,10 +1,9 @@
 import "@/styles/globals.css";
-import { IBM_Plex_Sans } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 
-const ibm = IBM_Plex_Sans({
-  weight: ["400", "700"],
+const publicSans = Public_Sans({
   subsets: ["latin"],
 });
 
@@ -31,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="twitter:description" content="갓생.패쓰" />
         <meta name="twitter:url" content="https://life.reveally.club" />
       </Head>
-      <main className={ibm.className}>
+      <main className={publicSans.className}>
         <Component {...pageProps} />
       </main>
     </>
