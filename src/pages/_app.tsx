@@ -15,19 +15,25 @@ export default function App({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
         />
-        <title>갓생.패쓰</title>
-        <meta name="description" content="갓생.패쓰" />
+        <title>life.pass | 갓생.패쓰</title>
+        <meta name="description" content="life.pass | 갓생.패쓰" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://life.reveally.club" />
-        <meta property="og:title" content="갓생.패쓰" />
+        <meta property="og:title" content="life.pass | 갓생.패쓰" />
         <meta property="og:image" content="https://life.reveally.club/og.png" />
-        <meta property="og:description" content="갓생.패쓰" />
-        <meta property="og:site_name" content="reveally.club" />
+        <meta
+          property="og:description"
+          content="Betting Platform Services to Achieve Your Objectives, life.pass a.k.a 갓생.패쓰"
+        />
+        <meta property="og:site_name" content="life.reveally.club" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:site" content="갓생.패쓰" />
-        <meta name="twitter:title" content="갓생.패쓰" />
-        <meta name="twitter:description" content="갓생.패쓰" />
+        <meta name="twitter:site" content="life.pass | 갓생.패쓰" />
+        <meta name="twitter:title" content="life.pass | 갓생.패쓰" />
+        <meta
+          name="twitter:description"
+          content="Betting Platform Services to Achieve Your Objectives, life.pass a.k.a 갓생.패쓰"
+        />
         <meta name="twitter:url" content="https://life.reveally.club" />
       </Head>
       <main className={publicSans.className}>
