@@ -8,7 +8,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { fireStore } from "../../../modules/firebase";
+import { fireStore } from "../../modules/firebase";
 import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 

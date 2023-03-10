@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "../common/Layout";
-import LeaderBoard from "../compoents/LeaderBoard";
+import LeaderBoard from "../components/LeaderBoard";
 
 export default function Leader() {
   return (

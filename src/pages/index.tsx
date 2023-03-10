@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Layout from "./common/Layout";
-import Timer from "./compoents/Timer";
-import { fireStorage, fireStore } from "../../modules/firebase";
+import Timer from "./components/Timer";
+import { fireStorage, fireStore } from "../modules/firebase";
 import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import { ref } from "firebase/storage";

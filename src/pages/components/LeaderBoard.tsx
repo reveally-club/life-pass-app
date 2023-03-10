@@ -1,6 +1,6 @@
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { fireStore } from "../../../modules/firebase";
+import { fireStore } from "../../modules/firebase";
 import dayjs from "dayjs";
 import LeaderItem from "./LeaderItem";
 
