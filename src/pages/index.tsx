@@ -59,7 +59,11 @@ export default function Home() {
           <div className="w-full mt-8 mb-8 flex justify-center">
             {capture && <img src={capture} alt="갓생.인증" />}
             {cam && !capture ? (
-              <Webcam ref={webcamRef} screenshotFormat="image/jpeg" />
+              <Webcam
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={{ facingMode: { exact: "environment" } }}
+              />
             ) : (
               <div />
             )}
