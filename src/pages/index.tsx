@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 export default function Home() {
-  const [capture, setCapture] = useState<String>("");
+  const [capture, setCapture] = useState<string>("");
   const [cam, setCam] = useState<Boolean>(false);
   const webcamRef = useRef<Webcam>(null);
 
