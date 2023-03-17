@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+HTML SCSSResult Skip Results Iframe .emoji-firework {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.emoji {
+  position: absolute;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation: boom-#{$i} 1s infinite;
+    }
+  }
+}
+
+@for $i from 1 through 10 {
+  @keyframes boom-#{$i} {
+    0% {
+      transform: translate(0);
+    }
+
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(random(200) - 100 + px, random(200) - 100 + px)
+        rotate(random(500) + deg);
+    }
+  }
+}
