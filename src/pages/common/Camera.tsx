@@ -21,24 +21,39 @@ export default function Camera() {
         img.src = reader!.result as string;
 
         img.onload = () => {
-          canvas.width = img.width;
-          canvas.height = img.height;
+          createImageBitmap(img).then((bitmap) => {
+            const MAX_CANVAS_WIDTH = 512;
+            const MAX_CANVAS_HEIGHT = 512;
+            const canvasWidth = Math.min(bitmap.width, MAX_CANVAS_WIDTH);
+            const canvasHeight = Math.min(bitmap.height, MAX_CANVAS_HEIGHT);
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
 
-          if (ctx) {
-            ctx.drawImage(img, 0, 0);
-
-            const time = dayjs().format("YYYY.MM.DD");
-            ctx.font = "24px Courier New";
-            ctx.fillStyle = "white";
-            ctx.textAlign = "center";
-            ctx.fillText(
-              `🎫 life.pass ${time}`,
-              img.width / 2 - ctx.measureText(time).width,
-              img.height - 40
+            const ratio = Math.min(
+              MAX_CANVAS_WIDTH / bitmap.width,
+              MAX_CANVAS_HEIGHT / bitmap.height
             );
+            const drawWidth = bitmap.width * ratio;
+            const drawHeight = bitmap.height * ratio;
+            const drawX = (canvasWidth - drawWidth) / 2;
+            const drawY = (canvasHeight - drawHeight) / 2;
 
-            setCapturedImage(canvas.toDataURL());
-          }
+            if (ctx) {
+              ctx.drawImage(bitmap, drawX, drawY, drawWidth, drawHeight);
+
+              const time = dayjs().format("YYYY.MM.DD");
+              ctx.font = `${Math.floor(canvas.width / 20)}px Courier New`;
+              ctx.fillStyle = "white";
+              ctx.textAlign = "center";
+              ctx.fillText(
+                `🎫 life.pass ${time}`,
+                canvas.width / 2,
+                canvas.height - canvas.width / 20
+              );
+
+              setCapturedImage(canvas.toDataURL());
+            }
+          });
         };
       };
       reader.readAsDataURL(file);
@@ -105,7 +120,7 @@ export default function Camera() {
             id="pass-file"
             type="file"
             accept="image/*"
-            capture="user"
+            capture="environment"
             className="hidden"
             onChange={handleCapture}
           />
