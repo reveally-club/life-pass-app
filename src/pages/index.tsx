@@ -3,8 +3,6 @@ import Layout from "./common/Layout";
 import Link from "next/link";
 
 export default function Home() {
-  const router = useRouter();
-
   return (
     <Layout>
       <section className="flex flex-col w-full items-center">

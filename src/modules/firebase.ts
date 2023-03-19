@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { Analytics, getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth";
@@ -20,4 +21,10 @@ const fireStore = getFirestore(firebaseApp);
 const fireStorage = getStorage(firebaseApp);
 const fireAuth = getAuth(firebaseApp);
 
-export { fireStore, fireStorage, fireAuth };
+let fireAnalytics: Analytics;
+
+if (typeof window !== "undefined") {
+  fireAnalytics = getAnalytics(firebaseApp);
+}
+
+export { fireStore, fireAnalytics, fireStorage, fireAuth };

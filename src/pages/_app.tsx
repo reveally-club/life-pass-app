@@ -1,13 +1,21 @@
-import "@/styles/globals.scss";
+import Head from "next/head";
 import { Public_Sans } from "next/font/google";
 import type { AppProps } from "next/app";
-import Head from "next/head";
+import { useEffect } from "react";
+import { fireAnalytics } from "@/modules/firebase";
+import "@/styles/globals.scss";
 
 const publicSans = Public_Sans({
   subsets: ["latin"],
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    if (typeof window != undefined) {
+      fireAnalytics;
+    }
+  }, []);
+
   return (
     <>
       <Head>
