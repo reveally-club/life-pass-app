@@ -1,50 +1,58 @@
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
+
 import Swal from "sweetalert2";
 
-export default function Camera() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
+export default function CustomCamera() {
   const [cam, setCam] = useState(false);
   const [capturedImage, setCapturedImage] = useState("");
 
   const handleCam = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const constraints = { video: true };
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(function (mediaStream) {
+        const video = document.querySelector("video");
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-
+        if (video) {
+          video.srcObject = mediaStream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+        }
+      })
+      .catch(function (err) {
+        console.log(err.name + ": " + err.message);
+      });
     setCam(!cam);
   };
 
-  const handleCapture = () => {
+  const handleCapture = async () => {
+    const video = document.querySelector("video");
     const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current?.videoWidth || 0;
-    canvas.height = videoRef.current?.videoHeight || 0;
 
-    const context = canvas.getContext("2d");
+    if (video) {
+      const { videoWidth, videoHeight } = video;
 
-    if (context && videoRef.current) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
+
       const ctx = canvas.getContext("2d");
-      ctx?.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-
-      const time = dayjs().format("YYYY.MM.DD");
-
       if (ctx) {
+        ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+        const time = dayjs().format("YYYY.MM.DD");
         ctx.font = "24px Courier New";
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
         ctx.fillText(
           `🎫 life.pass ${time}`,
-          canvas.width / 2 - ctx.measureText(time).width / 2,
-          canvas.height - 40
+          videoWidth / 2 - ctx.measureText(time).width,
+          videoHeight - 40
         );
+
+        setCapturedImage(canvas.toDataURL());
       }
-      setCapturedImage(canvas.toDataURL());
     }
   };
 
@@ -59,8 +67,9 @@ export default function Camera() {
         📸 인증용 카메라 켜기
       </button>
       <div className="w-full mt-8 mb-8 flex justify-center">
+        {capturedImage && <img src={capturedImage} alt="갓생.인증" />}
         {cam && !capturedImage ? (
-          <video className="w-full" ref={videoRef} />
+          <video className="w-full" autoPlay />
         ) : (
           <div />
         )}
