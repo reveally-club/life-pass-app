@@ -1,18 +1,29 @@
+import { useRouter } from "next/router";
 import Layout from "./common/Layout";
-import Camera from "./common/Camera";
+import Link from "next/link";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <Layout>
-      <section className="mt-8 flex flex-col w-full items-center">
-        <h2 className="text-4xl">갓생.인증</h2>
-        <h3 className="mt-2 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-400">
-          👍 갓생으로 성장한 하루를 보내세요. 👍
-        </h3>
-        <Camera />
-        <p className="w-full flex justify-center mt-6 text-sm text-gray-500">
-          ✔️ 인증 사진은 갓생.기록에 등록됩니다. ✔️
-        </p>
+      <section className="flex flex-col w-full items-center">
+        <div className="mt-8 flex flex-col w-full items-center">
+          <h3 className="font-bold text-7xl text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-400">
+            Coming Soon
+          </h3>
+          <p className="mt-8 text-xl text-gray-600 font-semibold">
+            Season0, 내기형 기상미션 인증을 끝내고 다음 시즌을 준비하고
+            있습니다.
+          </p>
+          <Link
+            href="https://open.kakao.com/o/g0mKTf8e"
+            target="_blank"
+            className="flex justify-center rounded-lg font-semibold text-gray-800  bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300 px-6 py-4 mt-6"
+          >
+            💬 Season0, 🌄내기형 기상미션 인증방🌄 구경하기
+          </Link>
+        </div>
       </section>
     </Layout>
   );
