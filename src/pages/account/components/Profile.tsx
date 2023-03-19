@@ -1,23 +1,30 @@
+import { useEffect, useState } from "react";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { fireAuth } from "@/modules/firebase";
 import Loading from "@/pages/common/Loading";
-import { useEffect } from "react";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { User } from "firebase/auth";
 
 export default function Profile() {
-  const [signInWithGoogle, googleUser, googleLoading, googleError] =
-    useSignInWithGoogle(fireAuth);
+  const [signInWithGoogle, googleLoading] = useSignInWithGoogle(fireAuth);
+  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {}, [googleUser]);
+  useEffect(() => {
+    const unsubscribe = fireAuth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
 
   if (googleLoading) return <Loading size={2} />;
 
   return (
     <div>
-      {googleUser ? (
+      {user ? (
         <img
           className="w-8 h-8 rounded-full hover:cursor-pointer hover:shadow-lg"
-          src={googleUser.user.photoURL ?? "./og.png"}
-          alt={googleUser.user.displayName!}
+          src={user.photoURL ?? "./og.png"}
+          alt={user.displayName!}
         />
       ) : (
         <button
