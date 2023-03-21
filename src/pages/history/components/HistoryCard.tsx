@@ -45,18 +45,23 @@ const HistoryCard: NextPage<Props> = ({ id, photo, tagList, support }) => {
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-md hover:shadow-lg hover:cursor-pointer">
       <Zoom>
-        <img className="w-full" src={historyPhoto} alt={photo} />
+        <img
+          className="w-full"
+          src={loading ? "/og.png" : historyPhoto}
+          alt={photo}
+        />
       </Zoom>
       <div className="flex justify-between px-2 pt-4 pb-2">
         <div>
-          {tagList.map((data, key) => (
-            <span
-              key={key}
-              className="inline-block bg-gray-50 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-            >
-              {data}
-            </span>
-          ))}
+          {tagList &&
+            tagList.map((data, key) => (
+              <span
+                key={key}
+                className="inline-block bg-gray-50 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >
+                {data}
+              </span>
+            ))}
         </div>
         {isFirework && <Firework />}
         <span
