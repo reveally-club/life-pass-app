@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 
 type Props = {
-  size: number;
+  size?: number;
 };
 
 const Loading: NextPage<Props> = ({ size = 8 }) => {

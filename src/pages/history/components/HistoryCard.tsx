@@ -1,41 +1,73 @@
 import { useState } from "react";
+import { NextPage } from "next";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import Firework from "./Firework";
+import { ref } from "firebase/storage";
+import { fireStorage, fireStore } from "@/modules/firebase";
+import { useDownloadURL } from "react-firebase-hooks/storage";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
-export default function HistoryCard() {
+interface Props {
+  id: string;
+  photo: string;
+  tagList: string[];
+  support: number;
+}
+
+const HistoryCard: NextPage<Props> = ({ id, photo, tagList, support }) => {
+  const storageRef = ref(fireStorage);
+
+  const [historyPhoto, loading] = useDownloadURL(ref(storageRef, `${photo}`));
   const [isFirework, setIsFirework] = useState(false);
 
-  function handleFirework() {
+  async function handleSupport() {
+    const seasonRef = doc(collection(fireStore, "season-test"), `${id}`);
+
+    const preSupport =
+      (await getDoc(seasonRef).then((doc) => doc.data()?.support)) + 1;
+
+    await updateDoc(seasonRef, {
+      support: preSupport,
+    });
+
+    handleFirework();
+  }
+
+  async function handleFirework() {
     setIsFirework(true);
 
     setTimeout(() => {
       setIsFirework(false);
-    }, 1000);
+    }, 2000);
   }
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-md hover:shadow-lg hover:cursor-pointer">
       <Zoom>
-        <img className="w-full" src="/og.png" alt="Sunset in the mountains" />
+        <img className="w-full" src={historyPhoto} alt={photo} />
       </Zoom>
       <div className="flex justify-between px-2 pt-4 pb-2">
         <div>
-          <span className="inline-block bg-gray-50 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            🎫 시즌1
-          </span>
-          <span className="inline-block bg-gray-50 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            🌅 수면습관
-          </span>
+          {tagList.map((data, key) => (
+            <span
+              key={key}
+              className="inline-block bg-gray-50 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+            >
+              {data}
+            </span>
+          ))}
         </div>
         {isFirework && <Firework />}
         <span
-          onClick={handleFirework}
+          onClick={handleSupport}
           className="relative flex hover:bg-gradient-to-r from-sky-100 to-violet-100 rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:cursor-pointer"
         >
-          👏 1명의 응원!
+          👏 {support}명의 응원!
         </span>
       </div>
     </div>
   );
-}
+};
+
+export default HistoryCard;

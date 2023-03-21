@@ -1,15 +1,27 @@
-import dayjs from "dayjs";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { fireStorage, fireStore } from "@/modules/firebase";
+import { ref } from "firebase/storage";
+import { useUploadFile } from "react-firebase-hooks/storage";
+import dayjs from "dayjs";
 
 import Swal from "sweetalert2";
+import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
 
 export default function Camera() {
   const router = useRouter();
+  const storageRef = ref(
+    fireStorage,
+    `season-test/test-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
+  );
+
+  const [uploadFile] = useUploadFile();
+  const [selectedFile, setSelectedFile] = useState<File>();
   const [capturedImage, setCapturedImage] = useState("");
 
   const handleCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : undefined;
+    setSelectedFile(file);
 
     if (file && file instanceof Blob) {
       const reader = new FileReader();
@@ -60,6 +72,29 @@ export default function Camera() {
     }
   };
 
+  const onSubmit = async () => {
+    if (selectedFile) {
+      const image = await uploadFile(storageRef, selectedFile, {
+        contentType: "image/jpeg",
+      });
+
+      const data = {
+        photo: image?.metadata.fullPath,
+        support: 0,
+        tagList: ["🎫시즌1", "🌄기상인증"],
+        createdAt: Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date()),
+        user: {
+          displayName: "test",
+          uid: "test",
+        },
+      };
+
+      const season = doc(collection(fireStore, "season-test"));
+      await setDoc(season, data);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="w-full mt-8 mb-8 flex justify-center">
@@ -69,6 +104,7 @@ export default function Camera() {
         <div className="flex flex-col gap-4">
           <button
             onClick={() => {
+              onSubmit();
               Swal.fire({
                 showCancelButton: true,
                 icon: "success",
@@ -113,7 +149,7 @@ export default function Camera() {
           </button>
         </div>
       ) : (
-        <label className="w-full flex justify-center rounded-lg py-3 font-semibold text-gray-800  bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300">
+        <label className="w-full flex justify-center cursor-pointer rounded-lg py-3 font-semibold text-gray-800  bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300">
           📸 갓생 인증하기
           <input
             required
