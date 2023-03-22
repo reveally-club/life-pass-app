@@ -1,4 +1,4 @@
-import { collection } from "firebase/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { fireStore } from "@/modules/firebase";
 import Layout from "../common/Layout";
@@ -6,9 +6,12 @@ import HistoryCard from "./components/HistoryCard";
 import Loading from "../common/Loading";
 
 export default function History() {
-  const [value, loading] = useCollection(collection(fireStore, "season-test"), {
-    snapshotListenOptions: { includeMetadataChanges: true },
-  });
+  const [value, loading] = useCollection(
+    query(collection(fireStore, "season-test"), orderBy("createdAt", "desc")),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   return (
     <Layout>
