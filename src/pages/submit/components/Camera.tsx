@@ -195,9 +195,6 @@ export default function Camera() {
                     const filesArray = [file];
 
                     navigator.share({
-                      title: "오늘도 갓생.패쓰 🎫",
-                      text: "오늘도 갓생으로 성장한 하루 🔥",
-                      url: "https://life.reveally.club",
                       files: filesArray,
                     });
                   } else {
