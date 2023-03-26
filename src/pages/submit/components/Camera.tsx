@@ -11,11 +11,7 @@ import {
   collection,
   doc,
   getDocs,
-  limit,
-  orderBy,
-  query,
   setDoc,
-  startAfter,
 } from "firebase/firestore";
 
 export default function Camera() {
@@ -154,6 +150,21 @@ export default function Camera() {
     return message;
   };
 
+  const dataURLToBlob = (dataURL: string) => {
+    const BASE64_MARKER = ";base64,";
+    const parts = dataURL.split(BASE64_MARKER);
+    const contentType = parts[0].split(":")[1];
+    const raw = window.atob(parts[1]);
+    const rawLength = raw.length;
+    const uInt8Array = new Uint8Array(rawLength);
+
+    for (let i = 0; i < rawLength; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], { type: contentType });
+  };
+
   return (
     <div className="w-full">
       <div className="w-full mt-8 mb-8 flex justify-center">
@@ -175,10 +186,19 @@ export default function Camera() {
               }).then((result) => {
                 if (!result.isConfirmed) {
                   if (navigator.share) {
+                    const imageBlob = dataURLToBlob(capturedImage);
+                    const fileName = "life-pass.png";
+                    const file = new File([imageBlob], fileName, {
+                      type: "image/png",
+                    });
+
+                    const filesArray = [file];
+
                     navigator.share({
                       title: "오늘도 갓생.패쓰 🎫",
                       text: "오늘도 갓생으로 성장한 하루 🔥",
                       url: "https://life.reveally.club",
+                      files: filesArray,
                     });
                   } else {
                     Swal.fire({
