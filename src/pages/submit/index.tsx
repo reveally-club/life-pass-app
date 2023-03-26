@@ -1,6 +1,5 @@
 import Layout from "../common/Layout";
 import Camera from "./components/Camera";
-import { useEffect } from "react";
 
 export default function Submit() {
   return (

@@ -6,7 +6,17 @@ import { useUploadFile } from "react-firebase-hooks/storage";
 import dayjs from "dayjs";
 
 import Swal from "sweetalert2";
-import { Timestamp, collection, doc, setDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+  startAfter,
+} from "firebase/firestore";
 
 export default function Camera() {
   const router = useRouter();
@@ -18,6 +28,38 @@ export default function Camera() {
   const [uploadFile] = useUploadFile();
   const [selectedFile, setSelectedFile] = useState<File>();
   const [capturedImage, setCapturedImage] = useState("");
+
+  const wrapText = (
+    context: {
+      measureText: (arg0: string) => any;
+      fillText: (arg0: string, arg1: any, arg2: any) => void;
+    },
+    text: string,
+    x: any,
+    y: any,
+    maxWidth: number,
+    lineHeight: any
+  ) => {
+    const words = text.split(" ");
+    let line = "";
+    let lineNumber = 0;
+
+    for (const word of words) {
+      const testLine = line + word + " ";
+      const metrics = context.measureText(testLine);
+      const testWidth = metrics.width;
+
+      if (testWidth > maxWidth && line.length > 0) {
+        context.fillText(line, x, y);
+        line = word + " ";
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+
+    context.fillText(line, x, y);
+  };
 
   const handleCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : undefined;
@@ -32,36 +74,36 @@ export default function Camera() {
         const img = new Image();
         img.src = reader!.result as string;
 
-        img.onload = () => {
-          createImageBitmap(img).then((bitmap) => {
+        img.onload = async () => {
+          createImageBitmap(img).then(async (bitmap) => {
             const MAX_CANVAS_WIDTH = 512;
             const MAX_CANVAS_HEIGHT = 512;
-            const canvasWidth = Math.min(bitmap.width, MAX_CANVAS_WIDTH);
-            const canvasHeight = Math.min(bitmap.height, MAX_CANVAS_HEIGHT);
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
 
             const ratio = Math.min(
               MAX_CANVAS_WIDTH / bitmap.width,
               MAX_CANVAS_HEIGHT / bitmap.height
             );
-            const drawWidth = bitmap.width * ratio;
-            const drawHeight = bitmap.height * ratio;
-            const drawX = (canvasWidth - drawWidth) / 2;
-            const drawY = (canvasHeight - drawHeight) / 2;
+
+            const canvasWidth = bitmap.width * ratio;
+            const canvasHeight = bitmap.height * ratio;
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
 
             if (ctx) {
-              ctx.drawImage(bitmap, drawX, drawY, drawWidth, drawHeight);
+              ctx.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
 
               const time = dayjs().format("YYYY.MM.DD");
+              const message = await getRandomMessage();
               ctx.font = `${Math.floor(canvas.width / 20)}px Courier New`;
               ctx.fillStyle = "white";
               ctx.textAlign = "center";
-              ctx.fillText(
-                `🎫 life.pass ${time}`,
-                canvas.width / 2,
-                canvas.height - canvas.width / 20
-              );
+              const maxWidth = canvas.width * 0.8;
+              const lineHeight = Math.floor(canvas.width / 20);
+              const wrappedText = `🎫 ${message}\n ${time}`;
+              const x = canvas.width / 2;
+              const y = canvas.height - lineHeight * 2;
+
+              wrapText(ctx, wrappedText, x, y, maxWidth, lineHeight);
 
               setCapturedImage(canvas.toDataURL());
             }
@@ -74,7 +116,8 @@ export default function Camera() {
 
   const onSubmit = async () => {
     if (selectedFile) {
-      const image = await uploadFile(storageRef, selectedFile, {
+      const blob = await fetch(capturedImage).then((res) => res.blob());
+      const image = await uploadFile(storageRef, blob, {
         contentType: "image/jpeg",
       });
 
@@ -93,6 +136,22 @@ export default function Camera() {
       const season = doc(collection(fireStore, "season-test"));
       await setDoc(season, data);
     }
+  };
+
+  const getRandomMessage = async () => {
+    const collectionRef = collection(fireStore, "watermark");
+    const querySnapshot = await getDocs(collectionRef);
+    const totalMessages = querySnapshot.docs.length;
+
+    if (totalMessages === 0) {
+      return "No messages available.";
+    }
+
+    const randomIndex = Math.floor(Math.random() * totalMessages);
+    const randomMessageDoc = querySnapshot.docs[randomIndex];
+    const message = randomMessageDoc.data().message;
+
+    return message;
   };
 
   return (
