@@ -32,7 +32,7 @@ export default function Home() {
           <>
             <Swiper
               className="w-full mt-8 mb-8"
-              slidesPerView={3}
+              slidesPerView={1}
               spaceBetween={30}
               autoplay={{
                 delay: 2500,
@@ -40,6 +40,16 @@ export default function Home() {
               }}
               pagination={{
                 clickable: true,
+              }}
+              breakpoints={{
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
               }}
             >
               {loading ? <Loading /> : <div />}
