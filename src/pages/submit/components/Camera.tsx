@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { fireStorage, fireStore } from "@/modules/firebase";
+import { fireAuth, fireStorage, fireStore } from "@/modules/firebase";
 import { ref } from "firebase/storage";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import dayjs from "dayjs";
@@ -13,6 +13,7 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Camera() {
   const router = useRouter();
@@ -20,6 +21,8 @@ export default function Camera() {
     fireStorage,
     `season-test/test-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
   );
+
+  const [user] = useAuthState(fireAuth);
 
   const [uploadFile] = useUploadFile();
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -38,7 +41,6 @@ export default function Camera() {
   ) => {
     const words = text.split(" ");
     let line = "";
-    let lineNumber = 0;
 
     for (const word of words) {
       const testLine = line + word + " ";
@@ -123,9 +125,10 @@ export default function Camera() {
         tagList: ["🎫시즌1", "🌄기상인증"],
         createdAt: Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
+        isSuccess: true,
         user: {
-          displayName: "test",
-          uid: "test",
+          displayName: user?.displayName,
+          uid: user?.uid,
         },
       };
 
@@ -225,17 +228,29 @@ export default function Camera() {
           </button>
         </div>
       ) : (
-        <label className="w-full flex justify-center cursor-pointer rounded-lg py-3 font-semibold text-gray-800  bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300">
-          📸 갓생 인증하기
-          <input
-            required
-            id="pass-file"
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={handleCapture}
-          />
+        <label
+          className={`w-full flex justify-center cursor-pointer rounded-lg py-3 font-semibold text-gray-800  ${
+            user
+              ? "bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300"
+              : "bg-gradient-to-r from-sky-100 to-violet-100"
+          }`}
+        >
+          {user ? (
+            <>
+              📸 갓생 인증하기
+              <input
+                required
+                id="pass-file"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleCapture}
+              />
+            </>
+          ) : (
+            <>🔥 갓생 인증에는 로그인이 필요합니다.</>
+          )}
         </label>
       )}
     </div>

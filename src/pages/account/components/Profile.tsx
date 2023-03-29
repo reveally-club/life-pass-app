@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { fireAuth } from "@/modules/firebase";
 import Loading from "@/pages/common/Loading";
-import { User } from "firebase/auth";
+import { User, signOut } from "firebase/auth";
 
 export default function Profile() {
   const [signInWithGoogle, googleLoading] = useSignInWithGoogle(fireAuth);
@@ -25,6 +25,9 @@ export default function Profile() {
           className="w-8 h-8 rounded-full hover:cursor-pointer hover:shadow-lg"
           src={user.photoURL ?? "./og.png"}
           alt={user.displayName!}
+          onClick={() => {
+            signOut(fireAuth);
+          }}
         />
       ) : (
         <button
