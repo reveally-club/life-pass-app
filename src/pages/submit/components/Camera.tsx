@@ -29,15 +29,12 @@ export default function Camera() {
   const [capturedImage, setCapturedImage] = useState("");
 
   const wrapText = (
-    context: {
-      measureText: (arg0: string) => any;
-      fillText: (arg0: string, arg1: any, arg2: any) => void;
-    },
+    context: CanvasRenderingContext2D,
     text: string,
-    x: any,
-    y: any,
+    x: number,
+    y: number,
     maxWidth: number,
-    lineHeight: any
+    lineHeight: number
   ) => {
     const words = text.split(" ");
     let line = "";
@@ -99,7 +96,11 @@ export default function Camera() {
               const lineHeight = Math.floor(canvas.width / 20);
               const wrappedText = `🎫 ${message}\n ${time}`;
               const x = canvas.width / 2;
-              const y = canvas.height - lineHeight * 2;
+
+              // 총 줄 수를 계산하고, 이를 기반으로 y 좌표를 정합니다.
+              const lines = wrappedText.split("\n").length;
+              const totalHeight = lineHeight * lines;
+              const y = canvas.height - totalHeight - lineHeight;
 
               wrapText(ctx, wrappedText, x, y, maxWidth, lineHeight);
 
