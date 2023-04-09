@@ -114,27 +114,40 @@ export default function Camera() {
   };
 
   const onSubmit = async () => {
-    if (selectedFile) {
-      const blob = await fetch(capturedImage).then((res) => res.blob());
-      const image = await uploadFile(storageRef, blob, {
-        contentType: "image/jpeg",
+    try {
+      if (selectedFile) {
+        const blob = await fetch(capturedImage).then((res) => res.blob());
+        const image = await uploadFile(storageRef, blob, {
+          contentType: "image/jpeg",
+        });
+
+        const data = {
+          photo: image?.metadata.fullPath,
+          support: 0,
+          tagList: dayjs().isAfter(
+            dayjs().set("hour", 10).set("minute", 0).set("second", 0)
+          )
+            ? ["🎫시즌1", "🔥갓생인증"]
+            : ["🎫시즌1", "🌄기상인증"],
+          createdAt: Timestamp.fromDate(new Date()),
+          updatedAt: Timestamp.fromDate(new Date()),
+          isSuccess: true,
+          user: {
+            displayName: user?.displayName,
+            uid: user?.uid,
+          },
+        };
+
+        const season = doc(collection(fireStore, "season1"));
+        await setDoc(season, data);
+      }
+    } catch (err) {
+      Swal.fire({
+        showCancelButton: true,
+        icon: "error",
+        title: "갓생.오류",
+        text: `${err}`,
       });
-
-      const data = {
-        photo: image?.metadata.fullPath,
-        support: 0,
-        tagList: ["🎫시즌1", "🌄기상인증"],
-        createdAt: Timestamp.fromDate(new Date()),
-        updatedAt: Timestamp.fromDate(new Date()),
-        isSuccess: true,
-        user: {
-          displayName: user?.displayName,
-          uid: user?.uid,
-        },
-      };
-
-      const season = doc(collection(fireStore, "season1"));
-      await setDoc(season, data);
     }
   };
 
