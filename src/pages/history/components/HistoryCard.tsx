@@ -22,7 +22,7 @@ const HistoryCard: NextPage<Props> = ({ id, photo, tagList, support }) => {
   const [isFirework, setIsFirework] = useState(false);
 
   async function handleSupport() {
-    const seasonRef = doc(collection(fireStore, "season-test"), `${id}`);
+    const seasonRef = doc(collection(fireStore, "season1"), `${id}`);
 
     const preSupport =
       (await getDoc(seasonRef).then((doc) => doc.data()?.support)) + 1;

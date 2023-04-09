@@ -19,7 +19,7 @@ export default function Camera() {
   const router = useRouter();
   const storageRef = ref(
     fireStorage,
-    `season-test/test-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
+    `season1/season1-${dayjs().format("YYYY-MM-DD HH:mm:ss")}.jpg`
   );
 
   const [user] = useAuthState(fireAuth);
@@ -133,7 +133,7 @@ export default function Camera() {
         },
       };
 
-      const season = doc(collection(fireStore, "season-test"));
+      const season = doc(collection(fireStore, "season1"));
       await setDoc(season, data);
     }
   };

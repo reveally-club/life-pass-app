@@ -11,7 +11,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
 export default function Home() {
-  const [season, setSeason] = useState("season-test");
+  const [season, setSeason] = useState("season1");
   const [value, loading] = useCollection(
     query(
       collection(fireStore, season),

@@ -7,7 +7,7 @@ import Loading from "../common/Loading";
 import { useState } from "react";
 
 export default function History() {
-  const [season, setSeason] = useState("season-test");
+  const [season, setSeason] = useState("season1");
   const [value, loading] = useCollection(
     query(collection(fireStore, season), orderBy("createdAt", "desc")),
     {
@@ -23,13 +23,21 @@ export default function History() {
           🔥 갓생을 나누고 같이 성장해요 🔥
         </h3>
         <div className="flex flex-wrap gap-4">
-          <button
+          {/* <button
             onClick={() => {
               setSeason("season-test");
             }}
             className="relative mt-2 flex bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300 rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:cursor-pointer"
           >
             season-test
+          </button> */}
+          <button
+            onClick={() => {
+              setSeason("season1");
+            }}
+            className="relative mt-2 flex bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300 rounded-full px-3 py-1 text-sm mr-2 mb-2 hover:cursor-pointer"
+          >
+            season-1
           </button>
         </div>
         <div className="flex flex-wrap gap-8 justify-center mt-8">
