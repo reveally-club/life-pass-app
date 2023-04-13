@@ -23,6 +23,7 @@ export default function Camera() {
   );
 
   const [user] = useAuthState(fireAuth);
+  const [msg, setMsg] = useState("");
 
   const [uploadFile] = useUploadFile();
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -88,7 +89,12 @@ export default function Camera() {
               ctx.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
 
               const time = dayjs().format("YYYY.MM.DD");
-              const message = await getRandomMessage();
+              let message;
+              if (msg) {
+                message = msg;
+              } else {
+                message = await getRandomMessage();
+              }
               ctx.font = `${Math.floor(canvas.width / 20)}px Courier New`;
               ctx.fillStyle = "white";
               ctx.textAlign = "center";
@@ -98,7 +104,7 @@ export default function Camera() {
               const x = canvas.width / 2;
 
               // 총 줄 수를 계산하고, 이를 기반으로 y 좌표를 정합니다.
-              const lines = wrappedText.split("\n").length;
+              const lines = wrappedText.split("\n").length - 1;
               const totalHeight = lineHeight * lines;
               const y = canvas.height - totalHeight - lineHeight;
 
@@ -111,6 +117,10 @@ export default function Camera() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMsg(event.target.value);
   };
 
   const onSubmit = async () => {
@@ -242,30 +252,39 @@ export default function Camera() {
           </button>
         </div>
       ) : (
-        <label
-          className={`w-full flex justify-center cursor-pointer rounded-lg py-3 font-semibold text-gray-800  ${
-            user
-              ? "bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300"
-              : "bg-gradient-to-r from-sky-100 to-violet-100"
-          }`}
-        >
-          {user ? (
-            <>
-              📸 갓생 인증하기
-              <input
-                required
-                id="pass-file"
-                type="file"
-                accept="image/*"
-                capture="environment"
-                className="hidden"
-                onChange={handleCapture}
-              />
-            </>
-          ) : (
-            <>🔥 갓생 인증에는 로그인이 필요합니다.</>
-          )}
-        </label>
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            value={msg}
+            onChange={handleChange}
+            className="bg-gray-50 border-2 border-sky-300 focus:border-violet-300 text-gray-900 text-sm rounded-lg block w-full p-3 outline-0"
+            placeholder="갓생 문구 입력하기"
+          />
+          <label
+            className={`w-full flex justify-center cursor-pointer rounded-lg py-3 font-semibold text-gray-800  ${
+              user
+                ? "bg-gradient-to-r from-sky-200 to-violet-200 hover:from-sky-300 hover:to-violet-300"
+                : "bg-gradient-to-r from-sky-100 to-violet-100"
+            }`}
+          >
+            {user ? (
+              <>
+                📸 갓생 인증하기
+                <input
+                  required
+                  id="pass-file"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleCapture}
+                />
+              </>
+            ) : (
+              <>🔥 갓생 인증에는 로그인이 필요합니다.</>
+            )}
+          </label>
+        </div>
       )}
     </div>
   );
