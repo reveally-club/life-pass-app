@@ -23,7 +23,7 @@ export default function Camera() {
   );
 
   const [user] = useAuthState(fireAuth);
-  const [msg, setMsg] = useState("");
+  const [message, setMessage] = useState("");
 
   const [uploadFile] = useUploadFile();
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -64,63 +64,75 @@ export default function Camera() {
     if (file && file instanceof Blob) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+        const publicSansFont = new FontFace(
+          "PublicSans",
+          "url(/fonts/PublicSans-Bold.ttf)"
+        );
+        publicSansFont.load().then(() => {
+          // 커스텀 폰트 로드
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
-        const img = new Image();
-        img.src = reader!.result as string;
+          const img = new Image();
+          img.src = reader!.result as string;
 
-        img.onload = async () => {
-          createImageBitmap(img).then(async (bitmap) => {
-            const MAX_CANVAS_WIDTH = 512;
-            const MAX_CANVAS_HEIGHT = 512;
+          img.onload = async () => {
+            createImageBitmap(img).then(async (bitmap) => {
+              const MAX_CANVAS_WIDTH = 1024;
+              const MAX_CANVAS_HEIGHT = 1024;
 
-            const ratio = Math.min(
-              MAX_CANVAS_WIDTH / bitmap.width,
-              MAX_CANVAS_HEIGHT / bitmap.height
-            );
+              const ratio = Math.min(
+                MAX_CANVAS_WIDTH / bitmap.width,
+                MAX_CANVAS_HEIGHT / bitmap.height
+              );
 
-            const canvasWidth = bitmap.width * ratio;
-            const canvasHeight = bitmap.height * ratio;
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
+              const canvasWidth = bitmap.width * ratio;
+              const canvasHeight = bitmap.height * ratio;
+              canvas.width = canvasWidth;
+              canvas.height = canvasHeight;
 
-            if (ctx) {
-              ctx.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
+              if (ctx) {
+                ctx.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
 
-              const time = dayjs().format("YYYY.MM.DD");
-              let message;
-              if (msg) {
-                message = msg;
-              } else {
-                message = await getRandomMessage();
+                const time = dayjs().format("YYYY.MM.DD hh:mm:ss");
+                ctx.font = `${Math.floor(canvas.width / 40)}px PublicSans`;
+                ctx.fillStyle = "white";
+                const lineHeight = Math.floor(canvas.width / 30);
+
+                // 총 줄 수를 계산하고, 이를 기반으로 y 좌표를 정합니다.
+                const title = `God Saeng 🎫`;
+                const titleX = canvas.width / 90;
+                const titleY = canvas.height * 0.06;
+                const titleWidth = canvas.width;
+                const titleHeight = lineHeight * 2;
+                wrapText(ctx, title, titleX, titleY, titleWidth, titleHeight);
+
+                const days = `🔥 ${time}`;
+                const daysX = canvas.width / 90;
+                const daysY =
+                  canvas.height - canvas.height / 20 - lineHeight * 1.2;
+                const daysWidth = canvas.width;
+                const daysHeight = lineHeight * 2;
+                wrapText(ctx, days, daysX, daysY, daysWidth, daysHeight);
+
+                const msg = `📝 ${message}`;
+                const msgX = canvas.width / 90;
+                const msgY = canvas.height - canvas.height / 20;
+                const msgWidth = canvas.width * 0.8;
+                wrapText(ctx, msg, msgX, msgY, msgWidth, lineHeight);
+
+                setCapturedImage(canvas.toDataURL());
               }
-              ctx.font = `${Math.floor(canvas.width / 20)}px Courier New`;
-              ctx.fillStyle = "white";
-              ctx.textAlign = "center";
-              const maxWidth = canvas.width * 0.8;
-              const lineHeight = Math.floor(canvas.width / 20);
-              const wrappedText = `🎫 ${message}\n ${time}`;
-              const x = canvas.width / 2;
-
-              // 총 줄 수를 계산하고, 이를 기반으로 y 좌표를 정합니다.
-              const lines = wrappedText.split("\n").length - 1;
-              const totalHeight = lineHeight * lines;
-              const y = canvas.height - totalHeight - lineHeight;
-
-              wrapText(ctx, wrappedText, x, y, maxWidth, lineHeight);
-
-              setCapturedImage(canvas.toDataURL());
-            }
-          });
-        };
+            });
+          };
+        });
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMsg(event.target.value);
+    setMessage(event.target.value);
   };
 
   const onSubmit = async () => {
@@ -255,7 +267,7 @@ export default function Camera() {
         <div className="flex flex-col gap-4">
           <input
             type="text"
-            value={msg}
+            value={message}
             onChange={handleChange}
             className="bg-gray-50 border-2 border-sky-300 focus:border-violet-300 text-gray-900 text-sm rounded-lg block w-full p-3 outline-0"
             placeholder="갓생 문구 입력하기"

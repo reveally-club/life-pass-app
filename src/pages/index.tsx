@@ -26,11 +26,11 @@ export default function Home() {
     <Layout>
       <section className="flex flex-col w-full items-center">
         <div className="mt-8 flex flex-col w-full items-center">
-          <h3 className="font-bold text-center text-7xl text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-400">
+          <h3 className="font-bold text-center text-2xl xl:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-400">
             갓생 인증하고, 갓생지원금 가져가기
           </h3>
           <div className="flex items-start w-full">
-            <h4 className="flex flex-col gap-2 font-semibold text-left text-2xl mt-8">
+            <h4 className="flex flex-col gap-2 font-semibold text-left text-xl xl:text-2xl mt-8">
               <p className="text-sky-400">😎 누적 갓생 미션 참여자: 53명</p>
               <p className="text-violet-400">
                 🤑 누적 갓생 성공 지급금: 927,000원
@@ -76,10 +76,10 @@ export default function Home() {
               ))}
             </Swiper>
           </>
-          <h4 className="mt-8 text-4xl text-gray-600 font-semibold">
+          <h4 className="mt-8 text-xl xl:text-4xl text-gray-600 font-semibold">
             어제보다 더 멋지고 건강한 나 그리고 나의 인생
           </h4>
-          <ul className="flex flex-col gap-8 mt-8 text-xl">
+          <ul className="flex flex-col gap-8 mt-8 xl:text-xl">
             <li>
               🎫 <b>참가비:</b> 3만원
             </li>
