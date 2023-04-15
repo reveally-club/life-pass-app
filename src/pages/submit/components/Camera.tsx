@@ -95,7 +95,7 @@ export default function Camera() {
                 ctx.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
 
                 const time = dayjs().format("YYYY.MM.DD hh:mm:ss");
-                ctx.font = `${Math.floor(canvas.width / 40)}px PublicSans`;
+                ctx.font = `${Math.floor(canvas.width / 30)}px PublicSans`;
                 ctx.fillStyle = "white";
                 const lineHeight = Math.floor(canvas.width / 30);
 
